@@ -13,14 +13,23 @@ router.get('/sign-up', (req, res, next) => {
 });
 
 router.post('/sign-up', (req, res, next) => {
-  const { name, email, password } = req.body;
+  const generateId = length => {
+    const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let token = '';
+    for (let i = 0; i < length; i++) {
+      token += characters[Math.floor(Math.random() * characters.length)];
+    }
+  };
+  const { name, email, password, status, confirmationCode } = req.body;
   bcryptjs
     .hash(password, 10)
     .then(hash => {
       return User.create({
         name,
         email,
-        passwordHash: hash
+        passwordHash: hash,
+        status,
+        confirmationCode: generateId 
       });
     })
     .then(user => {
